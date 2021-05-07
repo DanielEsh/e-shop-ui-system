@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
-const BtnHover = styled.span`
+export const BtnHover = styled.span`
   position: absolute;
   z-index: 1;
   left: 50%;
@@ -14,7 +13,7 @@ const BtnHover = styled.span`
   transition: transform .4s cubic-bezier(.25, .74, .22, .99), background-color .8s cubic-bezier(.25, .74, .22, .99), border-color .8s cubic-bezier(.25, .74, .22, .99);
 `
 
-const BtnText = styled.span`
+export const BtnText = styled.span`
   position: relative;
   z-index: 1;
   display: flex;
@@ -22,7 +21,7 @@ const BtnText = styled.span`
   transform: translateZ(0);
 `
 
-const Btn = styled.button<{isRounded?: boolean}>`
+export const Btn = styled.button<{isRounded?: boolean}>`
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -53,7 +52,11 @@ const Btn = styled.button<{isRounded?: boolean}>`
   
 
   &:hover {
-    box-shadow: 0 5px 11px 0 rgb(0 0 0 / 18%), 0 4px 15px 0 rgb(0 0 0 / 15%);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.12), 
+              0 2px 2px rgba(0,0,0,0.12), 
+              0 4px 4px rgba(0,0,0,0.12), 
+              0 8px 8px rgba(0,0,0,0.12),
+              0 16px 16px rgba(0,0,0,0.12);
   }
 
   &:hover ${BtnHover} {
@@ -226,69 +229,3 @@ const Btn = styled.button<{isRounded?: boolean}>`
     }
   }
 `
-
-export type ButtonProps  = {
-  theme: 'primary' | 'success' | 'warning' | 'danger' | 'info'
-  size: 'small' | 'medium' | 'large';
-  label: string;
-  outline?: boolean,
-  rounded?: boolean,
-  disabled?: boolean,
-  type?: 'button' | 'submit',
-  onClick?: () => void;
-}
-
-
-export const Button: React.FC<ButtonProps> = ({
-  type = 'button',
-  theme = 'primary',
-  size = 'medium',
-  label,
-  rounded,
-  outline,
-  disabled,
-  onClick,
-}) => {
-  const [positionX, setpositionX] = useState(50);
-  const [positionY, setPositionY] = useState(50);
-
-  const button = useRef<HTMLButtonElement>(null);
-
-
-  const handleMouseListener = (e:any) => {
-    const container = button.current;
-    const event = e.nativeEvent;
-
-    if (!container) {
-      return;
-    }
-
-    const x = event.offsetX / container.offsetWidth;
-    const y = (event.offsetY + ((container.offsetWidth - container.offsetHeight) / 2)) / container.offsetWidth;
-
-    setpositionX(100 * (x - .5));
-    setPositionY(100 * (y - .5));
-  }
-
-
-  return (
-    <Btn
-      ref={button}
-      type={type}
-      disabled={disabled}
-      className={[`color--${theme}`, `size--${size}`,  disabled ? 'is-disabled' : '', outline ? 'is-outline' : ''].join(' ')}
-      isRounded={rounded} 
-      onMouseEnter={handleMouseListener}
-      onMouseLeave={handleMouseListener}
-    >
-      <BtnHover 
-        style={{transformOrigin: `${positionX}% ${positionY}%`}}
-      />
-
-        <BtnText>
-          {label}
-        </BtnText>
-
-    </Btn>
-  );
-};
